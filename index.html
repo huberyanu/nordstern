@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf7f4">
+  <title>Nordstern • Dein persönliches Dashboard</title>
+  <style>
+    :root {
+      --ink: #16333a;
+      --muted: #6d8588;
+      --line: #dce9e7;
+      --paper: #f7fbfa;
+      --white: #ffffff;
+      --mint: #dcf1eb;
+      --teal: #0e746e;
+      --teal-dark: #07534f;
+      --coral: #ef866f;
+      --yellow: #f8d47a;
+      --shadow: 0 16px 45px rgba(25, 67, 67, .09);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font: 15px/1.5 "Trebuchet MS", "Segoe UI", sans-serif; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app-shell { display: grid; grid-template-columns: 245px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar { position: sticky; top: 0; height: 100vh; padding: 28px 18px; display: flex; flex-direction: column; background: var(--white); border-right: 1px solid var(--line); }
+    .brand { display: flex; gap: 11px; align-items: center; padding: 0 11px 31px; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; color: var(--white); background: var(--teal); border-radius: 13px; font-size: 20px; }
+    .brand strong { display: block; font: 700 21px Georgia, serif; letter-spacing: -.5px; }
+    .brand small { color: var(--muted); font-size: 11px; }
+    .nav-label { margin: 12px 12px 9px; color: #93a8a8; font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; }
+    .nav-btn { width: 100%; display: flex; align-items: center; gap: 12px; border: 0; border-radius: 12px; padding: 11px 12px; margin-bottom: 3px; color: var(--muted); background: transparent; text-align: left; transition: .2s; }
+    .nav-btn:hover { color: var(--teal-dark); background: #f1f8f6; }
+    .nav-btn.active { color: var(--teal-dark); background: var(--mint); font-weight: 700; }
+    .nav-icon { width: 20px; text-align: center; font-size: 17px; }
+    .sidebar-spacer { flex: 1; }
+    .profile { display: flex; gap: 10px; align-items: center; margin: 12px 4px 0; padding: 12px 8px; border-top: 1px solid var(--line); }
+    .avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--teal-dark); background: var(--yellow); font-weight: 700; }
+    .profile div { min-width: 0; } .profile strong { display: block; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+    .profile small { color: var(--muted); font-size: 11px; }
+    .content { min-width: 0; padding: 27px clamp(20px, 4vw, 55px) 55px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 36px; }
+    .eyebrow { margin: 0 0 5px; color: var(--teal); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; } h1 { margin-bottom: 6px; font: 700 clamp(28px, 4vw, 41px)/1.05 Georgia, serif; letter-spacing: -1px; }
+    h2 { margin-bottom: 4px; font: 700 25px Georgia, serif; letter-spacing: -.4px; } h3 { margin-bottom: 4px; font-size: 18px; }
+    .subtle { margin-bottom: 0; color: var(--muted); }
+    .date-stamp { color: var(--muted); font-size: 13px; text-align: right; }
+    .view { display: none; } .view.active { display: block; animation: rise .35s ease both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    .hero { display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 24px; }
+    .hero-actions { display: flex; gap: 9px; flex-wrap: wrap; justify-content: flex-end; }
+    .btn { border: 1px solid var(--line); padding: 10px 14px; border-radius: 10px; color: var(--ink); background: var(--white); font-weight: 700; transition: .2s; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(25,67,67,.08); } .btn.primary { border-color: var(--teal); color: var(--white); background: var(--teal); } .btn.danger { color: #b15345; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .card { min-width: 0; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
+    .span-4 { grid-column: span 4; } .span-5 { grid-column: span 5; } .span-6 { grid-column: span 6; } .span-7 { grid-column: span 7; } .span-8 { grid-column: span 8; } .span-12 { grid-column: span 12; }
+    .card-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 19px; } .card-head .icon { font-size: 24px; }
+    .metric { margin: 13px 0 2px; font: 700 34px Georgia, serif; } .metric small { font: 15px "Trebuchet MS", sans-serif; color: var(--muted); }
+    .mini-label { color: var(--muted); font-size: 12px; }
+    .sun-track { position: relative; height: 84px; margin: 10px 0 3px; overflow: hidden; border-bottom: 2px solid #a7d5ca; }
+    .sun-track:before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 74px; border-top: 1px dashed #cde3dd; border-radius: 50% 50% 0 0; }
+    .sun { position: absolute; left: 42%; bottom: 29px; width: 20px; height: 20px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 8px rgba(248,212,122,.15); }
+    .sun-times { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+    .world-list { display: grid; gap: 11px; } .city-row { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #edf3f1; } .city-row:last-child { border: 0; padding-bottom: 0; }
+    .city { display: flex; align-items: center; gap: 8px; } .city-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); } .city-time { font-weight: 700; }
+    .compass-wrap { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 22px; } .compass { position: relative; width: 150px; aspect-ratio: 1; display: grid; place-items: center; border: 7px solid #e8f4f0; border-radius: 50%; background: radial-gradient(circle, white 0 48%, #f0f8f5 49% 50%, white 51%); box-shadow: inset 0 0 0 1px var(--line); }
+    .compass:before { content: "N"; position: absolute; top: 6px; color: var(--coral); font-weight: 700; } .compass:after { content: "S"; position: absolute; bottom: 6px; color: var(--muted); font-weight: 700; }
+    .needle { width: 4px; height: 92px; background: linear-gradient(var(--coral) 0 50%, var(--teal) 50%); transform: rotate(24deg); border-radius: 5px; } .needle:after { content: ""; position: absolute; width: 13px; height: 13px; margin: 40px 0 0 -4px; border-radius: 50%; background: var(--white); border: 3px solid var(--teal); }
+    .stopwatch { text-align: center; padding: 8px 0 2px; } .timer-value { margin: 4px 0 18px; font: 700 42px Georgia, serif; letter-spacing: 2px; } .timer-actions { display: flex; justify-content: center; gap: 8px; }
+    .tool-tabs { display: flex; gap: 7px; flex-wrap: wrap; padding: 5px; margin-bottom: 17px; border-radius: 12px; background: #f1f7f5; } .tool-tab { flex: 1; min-width: 100px; border: 0; border-radius: 8px; padding: 9px; color: var(--muted); background: transparent; font-weight: 700; } .tool-tab.active { color: var(--teal-dark); background: var(--white); box-shadow: 0 3px 10px rgba(25,67,67,.08); }
+    .converter-grid { display: grid; grid-template-columns: 1fr 32px 1fr; align-items: end; gap: 9px; } label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 12px; font-weight: 700; } input, select, textarea { width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 10px 11px; color: var(--ink); background: #fbfdfc; outline: none; } input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(14,116,110,.1); } .swap { align-self: end; border: 0; color: var(--teal); background: transparent; font-size: 20px; }
+    .note-area { min-height: 205px; resize: vertical; } .save-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; } .saved-status { color: var(--teal); font-size: 12px; }
+    .calendar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; } .month-nav { display: flex; gap: 6px; } .icon-btn { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 9px; color: var(--teal); background: var(--white); } .month-title { font: 700 20px Georgia, serif; }
+    .weekdays, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; } .weekdays { margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 700; } .day { min-height: 44px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 9px; background: #f7fbfa; } .day.muted { color: #b7c5c4; background: transparent; } .day.today { color: var(--white); background: var(--teal); font-weight: 700; } .day.event { border-color: var(--coral); }
+    .login-overlay { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 20px; background: rgba(17,51,52,.32); backdrop-filter: blur(5px); } .login-overlay.hidden { display: none; } .login-box { width: min(420px, 100%); padding: 30px; border-radius: 22px; background: var(--white); box-shadow: 0 24px 70px rgba(13,48,48,.2); } .login-box h2 { margin-bottom: 8px; } .login-box form { display: grid; gap: 14px; margin-top: 23px; } .login-box .btn { margin-top: 4px; } .login-hint { margin: 15px 0 0; color: var(--muted); font-size: 12px; }
+    @media (max-width: 1050px) { .span-4, .span-5 { grid-column: span 6; } .span-7, .span-8 { grid-column: span 12; } }
+    @media (max-width: 720px) { .app-shell { display: block; } .sidebar { position: static; height: auto; padding: 15px; border-right: 0; border-bottom: 1px solid var(--line); } .brand { padding: 0 5px 12px; } .sidebar-spacer, .profile { display: none; } .nav-label { display: none; } .nav-btn { width: auto; display: inline-flex; margin: 0 3px 0 0; padding: 8px 9px; } .nav-btn span:last-child { display: none; } .content { padding: 22px 15px 38px; } .topbar { margin-bottom: 26px; } .date-stamp { display: none; } .hero { align-items: start; flex-direction: column; } .hero-actions { justify-content: flex-start; } .span-4, .span-5, .span-6, .span-7, .span-8, .span-12 { grid-column: span 12; } .compass-wrap { grid-template-columns: 125px 1fr; gap: 13px; } .compass { width: 125px; } .needle { height: 77px; } .card { padding: 18px; } }
+  </style>
+</head>
+<body>
+  <div id="loginOverlay" class="login-overlay">
+    <section class="login-box" aria-labelledby="loginTitle">
+      <div class="brand" style="padding:0 0 13px"><span class="brand-mark">✦</span><div><strong>nordstern</strong><small>dein persönliches cockpit</small></div></div>
+      <h2 id="loginTitle">Willkommen zurück</h2>
+      <p class="subtle">Melde dich an, damit deine Notizen und Einstellungen auf diesem Gerät erhalten bleiben.</p>
+      <form id="loginForm"><div><label for="username">Nutzername</label><input id="username" required autocomplete="username" placeholder="z. B. Alex"></div><div><label for="password">Passwort</label><input id="password" type="password" required autocomplete="current-password" placeholder="Dein Passwort"></div><button class="btn primary" type="submit">Anmelden <span>→</span></button></form>
+      <p class="login-hint">Demo-Modus: Die Anmeldung wird sicher nur lokal in deinem Browser gespeichert.</p>
+    </section>
+  </div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">✦</span><div><strong>nordstern</strong><small>dein persönliches cockpit</small></div></div>
+      <div class="nav-label">Übersicht</div>
+      <nav id="mainNav"><button class="nav-btn active" data-view="home"><span class="nav-icon">⌂</span><span>Startseite</span></button><button class="nav-btn" data-view="calendar"><span class="nav-icon">▣</span><span>Kalender</span></button><button class="nav-btn" data-view="notes"><span class="nav-icon">✎</span><span>Notizen</span></button><button class="nav-btn" data-view="tools"><span class="nav-icon">⌘</span><span>Werkzeuge</span></button></nav>
+      <div class="sidebar-spacer"></div><div class="profile"><span class="avatar" id="avatar">A</span><div><strong id="profileName">Gast</strong><small>angemeldet</small></div><button class="icon-btn" id="logoutBtn" title="Abmelden" aria-label="Abmelden">↪</button></div>
+    </aside>
+    <main class="content">
+      <header class="topbar"><div><p class="eyebrow">Samstag, 19. September 2026</p><h1 id="pageTitle">Guten Morgen, <span id="greetingName">Freund</span></h1><p class="subtle">Alles Wichtige an einem Ort.</p></div><div class="date-stamp">Lokale Zeit<br><strong id="currentTime">--:--</strong></div></header>
+      <section class="view active" id="homeView"><div class="hero"><div><p class="eyebrow">Dein Tag im Blick</p><h2>Was steht heute an?</h2><p class="subtle">Ein ruhiger Überblick für unterwegs und zuhause.</p></div><div class="hero-actions"><button class="btn" data-jump="notes">＋ Notiz</button><button class="btn primary" data-jump="tools">Werkzeuge öffnen →</button></div></div>
+        <div class="grid"><article class="card span-4"><div class="card-head"><div><p class="eyebrow">Standort</p><h3>Sonnenlauf</h3></div><span class="icon">☼</span></div><p class="subtle" id="locationLabel">Zürich, Schweiz</p><div class="sun-track"><span class="sun"></span></div><div class="sun-times"><span>Aufgang<br><strong>06:58</strong></span><span style="text-align:right">Untergang<br><strong>19:26</strong></span></div></article>
+        <article class="card span-4"><div class="card-head"><div><p class="eyebrow">Live</p><h3>Weltzeit</h3></div><span class="icon">◷</span></div><div class="world-list"><div class="city-row"><span class="city"><i class="city-dot"></i> Zürich</span><span class="city-time" data-zone="Europe/Zurich">--:--</span></div><div class="city-row"><span class="city"><i class="city-dot" style="background:var(--yellow)"></i> New York</span><span class="city-time" data-zone="America/New_York">--:--</span></div><div class="city-row"><span class="city"><i class="city-dot" style="background:var(--teal)"></i> Tokio</span><span class="city-time" data-zone="Asia/Tokyo">--:--</span></div></div></article>
+        <article class="card span-4"><div class="card-head"><div><p class="eyebrow">Fokus</p><h3>Stoppuhr</h3></div><span class="icon">⏱</span></div><div class="stopwatch"><div class="timer-value" id="stopwatchValue">00:00:00</div><div class="timer-actions"><button class="btn primary" id="stopwatchStart">Start</button><button class="btn" id="stopwatchReset">Reset</button></div></div></article>
+        <article class="card span-7"><div class="card-head"><div><p class="eyebrow">Orientierung</p><h3>Kompass</h3></div><span class="icon">✧</span></div><div class="compass-wrap"><div class="compass"><span class="needle"></span></div><div><div class="metric">NO <small>24°</small></div><p class="subtle">Nordost<br>Magnetische Ausrichtung</p><button class="btn" id="compassBtn" style="margin-top:14px">Ausrichtung aktualisieren</button></div></div></article>
+        <article class="card span-5"><div class="card-head"><div><p class="eyebrow">Schnellzugriff</p><h3>Deine Notiz</h3></div><span class="icon">✎</span></div><textarea class="note-area" id="quickNote" placeholder="Was möchtest du festhalten?"></textarea><div class="save-row"><span class="saved-status" id="quickStatus">Automatisch gespeichert</span><button class="btn primary" id="saveQuickNote">Speichern</button></div></article></div>
+      </section>
+      <section class="view" id="calendarView"><div class="hero"><div><p class="eyebrow">Planung</p><h2>Dein Kalender</h2><p class="subtle">Behalte Termine und Ideen im Blick.</p></div><button class="btn primary" id="addEventBtn">＋ Termin hinzufügen</button></div><div class="grid"><article class="card span-8"><div class="calendar-top"><button class="icon-btn" id="prevMonth">‹</button><div class="month-title" id="monthTitle"></div><button class="icon-btn" id="nextMonth">›</button></div><div class="weekdays"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div><div class="days" id="calendarDays"></div></article><article class="card span-4"><div class="card-head"><div><p class="eyebrow">Heute</p><h3>Als Nächstes</h3></div><span class="icon">◷</span></div><div id="eventList"><p class="subtle">Noch keine Termine eingetragen.</p></div></article></div></section>
+      <section class="view" id="notesView"><div class="hero"><div><p class="eyebrow">Gedankenraum</p><h2>Notizen</h2><p class="subtle">Alles, was du später wiederfinden möchtest.</p></div></div><div class="grid"><article class="card span-8"><label for="mainNotes">Meine Notizen</label><textarea class="note-area" id="mainNotes" placeholder="Schreib frei los ..."></textarea><div class="save-row"><span class="saved-status" id="noteStatus">Automatisch gespeichert</span><button class="btn primary" id="saveNotes">Notizen speichern</button></div></article><article class="card span-4"><div class="card-head"><div><p class="eyebrow">Privat</p><h3>Auf diesem Gerät</h3></div><span class="icon">⌁</span></div><p class="subtle">Deine Notizen werden lokal im Browser gespeichert und sind nach dem nächsten Login wieder da.</p><p class="metric" id="noteCount">0 <small>Zeichen</small></p></article></div></section>
+      <section class="view" id="toolsView"><div class="hero"><div><p class="eyebrow">Praktische Helfer</p><h2>Werkzeuge</h2><p class="subtle">Rechnen, umwandeln und Zeit im Griff behalten.</p></div></div><div class="grid"><article class="card span-6"><div class="card-head"><div><p class="eyebrow">Umrechner</p><h3>Einheiten & Währungen</h3></div><span class="icon">⇄</span></div><div class="tool-tabs"><button class="tool-tab active" data-tool="currency">CHF ↔ EUR</button><button class="tool-tab" data-tool="metric">Metrisch</button><button class="tool-tab" data-tool="liquid">Flüssigkeit</button></div><div id="converterPanel"></div></article><article class="card span-6"><div class="card-head"><div><p class="eyebrow">Countdown</p><h3>Timer</h3></div><span class="icon">◷</span></div><div class="converter-grid"><div><label for="timerMinutes">Minuten</label><input id="timerMinutes" type="number" min="0" value="5"></div><div></div><div><label for="timerSeconds">Sekunden</label><input id="timerSeconds" type="number" min="0" max="59" value="0"></div></div><div class="stopwatch"><div class="timer-value" id="timerValue">05:00</div><div class="timer-actions"><button class="btn primary" id="timerStart">Start</button><button class="btn" id="timerReset">Reset</button></div></div></article></div></section>
+    </main>
+  </div>
+  <script>
+    const state = { user: localStorage.getItem('nordstern-user'), stopwatch: 0, stopwatchRunning: false, timer: 300, timerRunning: false, month: new Date(2026, 8, 1), events: JSON.parse(localStorage.getItem('nordstern-events') || '[]') };
+    const $ = (selector) => document.querySelector(selector);
+    const formatTime = (seconds) => [Math.floor(seconds / 3600), Math.floor(seconds / 60) % 60, seconds % 60].map((part) => String(part).padStart(2, '0')).join(':');
+    const formatShortTime = (seconds) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+    function showUser() { const name = state.user || 'Freund'; $('#profileName').textContent = name; $('#greetingName').textContent = name; $('#avatar').textContent = name.charAt(0).toUpperCase(); $('#loginOverlay').classList.toggle('hidden', Boolean(state.user)); }
+    function showView(view) { document.querySelectorAll('.view').forEach((item) => item.classList.toggle('active', item.id === `${view}View`)); document.querySelectorAll('.nav-btn').forEach((item) => item.classList.toggle('active', item.dataset.view === view)); }
+    function updateClock() { $('#currentTime').textContent = new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date()); document.querySelectorAll('[data-zone]').forEach((item) => item.textContent = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: item.dataset.zone }).format(new Date())); }
+    function renderConverter(type = 'currency') { const configs = { currency: ['Betrag', 'CHF', 'Euro', (value) => value * .95], metric: ['Wert', 'Kilometer', 'Meilen', (value) => value * .621371], liquid: ['Menge', 'Liter', 'Gallonen', (value) => value * .264172] }; const [label, from, to, calculate] = configs[type]; $('#converterPanel').innerHTML = `<div class="converter-grid"><div><label for="convertInput">${label} in ${from}</label><input id="convertInput" type="number" value="1" step="any"></div><button class="swap" title="Richtung tauschen" aria-label="Richtung tauschen">⇄</button><div><label for="convertOutput">Ergebnis in ${to}</label><input id="convertOutput" readonly></div></div><p class="mini-label" style="margin-top:13px">Richtwert: ${type === 'currency' ? '1 CHF = 0,95 EUR' : type === 'metric' ? '1 km = 0,621 mi' : '1 l = 0,264 gal'}</p>`; const input = $('#convertInput'); const output = $('#convertOutput'); const update = () => output.value = Number.isFinite(Number(input.value)) ? calculate(Number(input.value)).toFixed(2) : ''; input.addEventListener('input', update); update(); }
+    function renderCalendar() { const year = state.month.getFullYear(); const month = state.month.getMonth(); $('#monthTitle').textContent = new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(state.month); const firstDay = (new Date(year, month, 1).getDay() + 6) % 7; const total = new Date(year, month + 1, 0).getDate(); const cells = []; for (let i = 0; i < firstDay; i += 1) cells.push('<span class="day muted"></span>'); for (let day = 1; day <= total; day += 1) { const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`; const today = dateKey === '2026-09-19' ? ' today' : ''; const event = state.events.some((item) => item.date === dateKey) ? ' event' : ''; cells.push(`<button class="day${today}${event}" data-date="${dateKey}">${day}</button>`); } $('#calendarDays').innerHTML = cells.join(''); $('#eventList').innerHTML = state.events.length ? state.events.map((item) => `<p><strong>${item.title}</strong><br><span class="subtle">${new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium' }).format(new Date(`${item.date}T12:00:00`))}</span></p>`).join('') : '<p class="subtle">Noch keine Termine eingetragen.</p>'; }
+    function loadNotes() { $('#mainNotes').value = localStorage.getItem('nordstern-notes') || ''; $('#quickNote').value = localStorage.getItem('nordstern-notes') || ''; updateNoteCount(); }
+    function saveNotes() { const text = $('#mainNotes').value; localStorage.setItem('nordstern-notes', text); $('#quickNote').value = text; $('#noteStatus').textContent = 'Gespeichert · gerade eben'; $('#quickStatus').textContent = 'Gespeichert · gerade eben'; updateNoteCount(); }
+    function updateNoteCount() { $('#noteCount').innerHTML = `${$('#mainNotes').value.length} <small>Zeichen</small>`; }
+    $('#loginForm').addEventListener('submit', (event) => { event.preventDefault(); state.user = $('#username').value.trim(); localStorage.setItem('nordstern-user', state.user); showUser(); });
+    $('#logoutBtn').addEventListener('click', () => { localStorage.removeItem('nordstern-user'); state.user = null; showUser(); });
+    document.querySelectorAll('.nav-btn').forEach((button) => button.addEventListener('click', () => showView(button.dataset.view))); document.querySelectorAll('[data-jump]').forEach((button) => button.addEventListener('click', () => showView(button.dataset.jump)));
+    let stopwatchInterval; $('#stopwatchStart').addEventListener('click', () => { state.stopwatchRunning = !state.stopwatchRunning; $('#stopwatchStart').textContent = state.stopwatchRunning ? 'Pause' : 'Start'; if (state.stopwatchRunning) stopwatchInterval = setInterval(() => { state.stopwatch += 1; $('#stopwatchValue').textContent = formatTime(state.stopwatch); }, 1000); else clearInterval(stopwatchInterval); }); $('#stopwatchReset').addEventListener('click', () => { clearInterval(stopwatchInterval); state.stopwatchRunning = false; state.stopwatch = 0; $('#stopwatchStart').textContent = 'Start'; $('#stopwatchValue').textContent = formatTime(0); });
+    let timerInterval; function refreshTimer() { $('#timerValue').textContent = formatShortTime(state.timer); } $('#timerStart').addEventListener('click', () => { if (state.timer <= 0) return; state.timerRunning = !state.timerRunning; $('#timerStart').textContent = state.timerRunning ? 'Pause' : 'Start'; if (state.timerRunning) timerInterval = setInterval(() => { state.timer -= 1; refreshTimer(); if (state.timer <= 0) { clearInterval(timerInterval); state.timerRunning = false; $('#timerStart').textContent = 'Start'; } }, 1000); else clearInterval(timerInterval); }); $('#timerReset').addEventListener('click', () => { clearInterval(timerInterval); state.timerRunning = false; state.timer = Number($('#timerMinutes').value || 0) * 60 + Number($('#timerSeconds').value || 0); $('#timerStart').textContent = 'Start'; refreshTimer(); });
+    $('#saveNotes').addEventListener('click', saveNotes); $('#saveQuickNote').addEventListener('click', () => { $('#mainNotes').value = $('#quickNote').value; saveNotes(); }); $('#mainNotes').addEventListener('input', updateNoteCount); $('#prevMonth').addEventListener('click', () => { state.month.setMonth(state.month.getMonth() - 1); renderCalendar(); }); $('#nextMonth').addEventListener('click', () => { state.month.setMonth(state.month.getMonth() + 1); renderCalendar(); }); $('#addEventBtn').addEventListener('click', () => { const title = prompt('Wie heißt der Termin?'); if (!title) return; const date = prompt('Datum (JJJJ-MM-TT)', '2026-09-19'); if (date) { state.events.push({ title, date }); localStorage.setItem('nordstern-events', JSON.stringify(state.events)); renderCalendar(); } }); document.querySelectorAll('.tool-tab').forEach((button) => button.addEventListener('click', () => { document.querySelectorAll('.tool-tab').forEach((tab) => tab.classList.remove('active')); button.classList.add('active'); renderConverter(button.dataset.tool); })); $('#compassBtn').addEventListener('click', (event) => { const button = event.currentTarget; button.textContent = 'Ausrichtung aktualisiert'; setTimeout(() => { button.textContent = 'Ausrichtung aktualisieren'; }, 1800); });
+    $('#timerMinutes').addEventListener('input', () => { if (!state.timerRunning) $('#timerReset').click(); }); $('#timerSeconds').addEventListener('input', () => { if (!state.timerRunning) $('#timerReset').click(); });
+    showUser(); updateClock(); setInterval(updateClock, 1000); loadNotes(); renderCalendar(); renderConverter(); refreshTimer();
+  </script>
+</body>
+</html>
